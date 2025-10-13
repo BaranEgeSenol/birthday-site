@@ -1,5 +1,6 @@
-// Built by Baran Ege Şenol — White envelope with heart seal → quick flap open → letter reveal + confetti burst
-import React, { useState, useEffect } from "react";
+// Built by Baran Ege Şenol — White envelope (heart seal) → quick flap open → letter reveal
+// Long-letter optimized: dynamic height + smooth scroll + confetti when opening
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -10,12 +11,23 @@ type Props = {
 };
 
 export default function LetterModal({ open, onClose, children }: Props) {
-  const [opened, setOpened] = useState(false); // flap opened?
+  const [opened, setOpened] = useState(false);        // flap opened?
+  const [paperHeight, setPaperHeight] = useState(440); // dynamic letter height
 
-  // 🔹 Konfeti: zarf açıldığında otomatik patla
+  // 🔧 Letter height: adapt to viewport (comfortable read for long text)
+  useEffect(() => {
+    const compute = () => {
+      const h = Math.round(Math.min(600, Math.max(380, window.innerHeight * 0.72)));
+      setPaperHeight(h);
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
+
+  // 🎉 Confetti when envelope opens
   useEffect(() => {
     if (!opened) return;
-
     const burst = (opts = {}) =>
       confetti({
         particleCount: 140,
@@ -24,7 +36,6 @@ export default function LetterModal({ open, onClose, children }: Props) {
         ticks: 180,
         ...opts,
       });
-
     burst();
     setTimeout(() => burst({ angle: 60, spread: 55, origin: { x: 0 } }), 120);
     setTimeout(() => burst({ angle: 120, spread: 55, origin: { x: 1 } }), 200);
@@ -82,7 +93,6 @@ export default function LetterModal({ open, onClose, children }: Props) {
                   borderRadius: 12,
                 }}
               />
-
               {/* Bottom triangle (envelope fold) */}
               <div
                 style={{
@@ -101,13 +111,12 @@ export default function LetterModal({ open, onClose, children }: Props) {
                   borderBottom: "1px solid #d8deea",
                 }}
               />
-
-              {/* FLAP (top triangle) — click to open */}
+              {/* FLAP (top triangle) — click to open fast */}
               <motion.div
                 onClick={() => setOpened(true)}
                 initial={false}
                 animate={{ rotateX: opened ? -178 : 0 }}
-                transition={{ type: "tween", duration: 0.28 }} // hızlı açılış
+                transition={{ type: "tween", duration: 0.28 }}
                 style={{
                   position: "absolute",
                   left: 0,
@@ -151,64 +160,75 @@ export default function LetterModal({ open, onClose, children }: Props) {
 
             {/* LETTER (paper) — slides up after flap opens */}
             <motion.div
-            initial={false}
-            animate={{
+              initial={false}
+              animate={{
                 y: opened ? -80 : 80,
                 opacity: opened ? 1 : 0,
-            }}
-            transition={{ duration: 0.45, delay: opened ? 0.05 : 0 }}
-            style={{
+              }}
+              transition={{ duration: 0.45, delay: opened ? 0.05 : 0 }}
+              style={{
                 position: "absolute",
                 left: 18,
                 right: 18,
                 top: 70,
-                height: 0,
+                height: opened ? paperHeight : 0, // ⬅️ dynamic height
                 pointerEvents: opened ? "auto" : "none",
-            }}
+                overflow: "hidden",
+              }}
             >
-            <div
+              <div
                 style={{
-                maxWidth: 740,
-                width: "calc(100% - 0px)",
-                margin: "0 auto",
-                background:
+                  maxWidth: 780,
+                  height: "100%",
+                  overflowY: "auto", // ⬅️ long letter scrolls
+                  margin: "0 auto",
+                  background:
                     "linear-gradient(0deg, rgba(255,255,255,0.98), rgba(248,250,253,0.98))",
-                border: "1px solid #e5e9f2",
-                borderRadius: 10,
-                boxShadow:
+                  border: "1px solid #e5e9f2",
+                  borderRadius: 10,
+                  boxShadow:
                     "0 10px 30px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.6)",
-                color: "#1c2330",
-                lineHeight: 1.8,
-                fontSize: 20,
-                padding: "26px 22px",
-                fontFamily: "'Dancing Script', cursive", // ✨ eklendi
+                  color: "#1c2330",
+                  lineHeight: 1.9,
+                  fontSize: 20,
+                  padding: "30px 26px",
+                  fontFamily: "'Dancing Script', cursive",
+                  scrollBehavior: "smooth",
                 }}
-            >
-                <div style={{ textAlign: "center", marginBottom: 8, fontWeight: 700 }}>
-                ✉️ Mektup
+              >
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginBottom: 10,
+                    fontWeight: 700,
+                    fontSize: 24,
+                  }}
+                >
+                  ✉️ Mektup
                 </div>
-                <div style={{ fontSize: 20 }}>{children}</div>
+
+                <div style={{ fontSize: 20, textAlign: "left" }}>{children}</div>
+
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <button
+                  <button
                     onClick={resetAndClose}
                     style={{
-                    marginTop: 14,
-                    padding: "10px 14px",
-                    borderRadius: 10,
-                    border: "1px solid #d0d6e3",
-                    background: "#0f172a",
-                    color: "#fff",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontFamily: "inherit", // buton fontu sade kalsın
+                      marginTop: 16,
+                      padding: "10px 16px",
+                      borderRadius: 10,
+                      border: "1px solid #d0d6e3",
+                      background: "#0f172a",
+                      color: "#fff",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
                     }}
-                >
+                  >
                     Kapat
-                </button>
+                  </button>
                 </div>
-            </div>
+              </div>
             </motion.div>
-
           </motion.div>
         </motion.div>
       )}

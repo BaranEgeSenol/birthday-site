@@ -81,15 +81,44 @@ export default function App() {
       {/* Mektup */}
       <LetterModal open={open} onClose={() => setOpen(false)}>
         <p>Merhaba Ahsencim,</p>
-        <p>
-          Bugün senin günün. Hayatıma kattığın tüm mutluluklar için teşekkür ederim.
-          Birlikte geçirdiğimiz her an benim için çok değerli. İyi ki varsın, iyi ki doğdun!
-          
-        </p>
-        <p>
-          Nice sağlıklı, mutlu ve sürprizlerle dolu senelere... <br /> — Baran Ege Şenol
-        </p>
-      </LetterModal>
+
+            <p>
+                Bugün senin günün… Ama sadece bir doğum günü değil bu.  
+                Bence senin varlığının dünyaya kattığı en güzel anlardan biri.  
+                Seni tanıdığım günden beri, enerjinle, gülüşünle, düşüncelerinle hep
+                farklı bir iz bıraktın bende. Ne zaman moralim bozulsa aklıma gelen
+                o küçük anlar bile yüzüme kocaman bir gülümseme konduruyor.
+            </p>
+
+            <p>
+                Bazen bir mesajınla, bazen sadece bir bakışınla, anlatamadığın
+                binlerce şeyi anlatabiliyorsun.  
+                Bu kadar doğal, bu kadar içten bir insan tanımak benim için
+                gerçekten büyük bir şans.
+            </p>
+
+            <p>
+                Bu siteyi yaparken düşündüğüm tek şey, senin o anda
+                gülümsemeni görmekti.  
+                Çünkü her şeyin ötesinde — bu satırların da, bu kodların da ötesinde —
+                ben senin yüzünde bir tebessüm görmek istedim sadece.
+            </p>
+
+            <p>
+                Belki bu sayfa kapanacak, belki zamanı geçecek ama
+                burada yazan duygular hep aynı kalacak:  
+                “İyi ki doğdun, iyi ki varsın, iyi ki hayatımdasın.”
+            </p>
+
+            <p>
+                Nice sağlıklı, mutlu, kahkahalarla dolu yılların olsun.
+                Dilerim bu yıl senin için yepyeni güzelliklerle dolu olur.
+            </p>
+
+            <p style={{ textAlign: "right", marginTop: 30 }}>
+                — Baran Ege Şenol 💌
+            </p>
+                </LetterModal>
     </div>
   );
 }
