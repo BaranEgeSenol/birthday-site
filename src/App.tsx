@@ -80,7 +80,7 @@ export default function App() {
 
       {/* Mektup */}
       <LetterModal open={open} onClose={() => setOpen(false)}>
-        <p>Sevgili Ahsen,</p>
+        <p>Merhaba Ahsencim,</p>
         <p>
           Bugün senin günün. Hayatıma kattığın tüm mutluluklar için teşekkür ederim.
           Birlikte geçirdiğimiz her an benim için çok değerli. İyi ki varsın, iyi ki doğdun!
