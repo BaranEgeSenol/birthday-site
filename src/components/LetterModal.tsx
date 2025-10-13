@@ -1,47 +1,56 @@
-// Built by Baran Ege Şenol — White envelope (heart seal) → quick flap open → letter reveal
-// Long-letter optimized: dynamic height + smooth scroll + confetti when opening
+// Built by Baran Ege Şenol — Envelope → centered A4-like letter (polished) + confetti + body scroll lock + mouse scroll support
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
-  children: React.ReactNode; // letter content
-};
+type Props = { open: boolean; onClose: () => void; children: React.ReactNode };
 
 export default function LetterModal({ open, onClose, children }: Props) {
-  const [opened, setOpened] = useState(false);        // flap opened?
-  const [paperHeight, setPaperHeight] = useState(440); // dynamic letter height
+  const [opened, setOpened] = useState(false);
+  const [paperW, setPaperW] = useState(900);
+  const [paperH, setPaperH] = useState(1273); // A4 ≈ 1:1.414
 
-  // 🔧 Letter height: adapt to viewport (comfortable read for long text)
+  // Viewport’a göre A4 benzeri boyut hesapla
   useEffect(() => {
-    const compute = () => {
-      const h = Math.round(Math.min(600, Math.max(380, window.innerHeight * 0.72)));
-      setPaperHeight(h);
+    const calc = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const w = Math.min(Math.max(420, Math.floor(vw * 0.95)), 1000); // 95vw, max 1000px
+      const a4h = Math.floor(w * 1.414);
+      const h = Math.min(Math.floor(vh * 0.92), a4h); // 92vh tavan
+      setPaperW(w);
+      setPaperH(h);
     };
-    compute();
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // 🎉 Confetti when envelope opens
+  // Modal açıkken sayfa arkasını kilitle + ESC ile kapat
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && handleClose();
+    window.addEventListener("keydown", esc);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", esc);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  // Zarf açılınca konfeti
   useEffect(() => {
     if (!opened) return;
     const burst = (opts = {}) =>
-      confetti({
-        particleCount: 140,
-        spread: 70,
-        origin: { y: 0.6 },
-        ticks: 180,
-        ...opts,
-      });
+      confetti({ particleCount: 160, spread: 70, origin: { y: 0.6 }, ticks: 180, ...(opts as any) });
     burst();
     setTimeout(() => burst({ angle: 60, spread: 55, origin: { x: 0 } }), 120);
     setTimeout(() => burst({ angle: 120, spread: 55, origin: { x: 1 } }), 200);
   }, [opened]);
 
-  const resetAndClose = () => {
+  const handleClose = () => {
     setOpened(false);
     onClose();
   };
@@ -54,182 +63,177 @@ export default function LetterModal({ open, onClose, children }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={resetAndClose}
+          onClick={handleClose}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background:
+              "radial-gradient(1200px 800px at 50% 40%, rgba(0,0,0,.68), rgba(0,0,0,.58))",
+            backdropFilter: "blur(2px)",
             display: "grid",
             placeItems: "center",
             zIndex: 50,
             padding: 16,
           }}
         >
-          <motion.div
-            key="envelopeWrap"
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ type: "spring", duration: 0.5 }}
-            onClick={(e) => e.stopPropagation()}
-            style={{ position: "relative", width: 360, height: 260 }}
-          >
-            {/* ENVELOPE */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                filter: "drop-shadow(0 18px 50px rgba(0,0,0,.35))",
-              }}
-            >
-              {/* Base (body) */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: "40px 0 0 0",
-                  background:
-                    "linear-gradient(180deg, #fff, #f6f7f9 40%, #eef0f4 100%)",
-                  border: "1px solid #e2e6ee",
-                  borderRadius: 12,
-                }}
-              />
-              {/* Bottom triangle (envelope fold) */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 160,
-                  clipPath: "polygon(0% 0%, 50% 100%, 100% 0%)",
-                  background:
-                    "linear-gradient(180deg, #fff, #f2f4f8 70%, #e9edf5 100%)",
-                  borderBottomLeftRadius: 12,
-                  borderBottomRightRadius: 12,
-                  borderLeft: "1px solid #e2e6ee",
-                  borderRight: "1px solid #e2e6ee",
-                  borderBottom: "1px solid #d8deea",
-                }}
-              />
-              {/* FLAP (top triangle) — click to open fast */}
+          {/* ZARF — sadece açılana kadar */}
+          <AnimatePresence>
+            {!opened && (
               <motion.div
-                onClick={() => setOpened(true)}
-                initial={false}
-                animate={{ rotateX: opened ? -178 : 0 }}
-                transition={{ type: "tween", duration: 0.28 }}
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  height: 160,
-                  transformOrigin: "top",
-                  clipPath: "polygon(0% 100%, 50% 0%, 100% 100%)",
-                  background:
-                    "linear-gradient(180deg, #ffffff, #f3f5f9 70%, #e9edf5 100%)",
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 12,
-                  border: "1px solid #e2e6ee",
-                  cursor: opened ? "default" : "pointer",
-                  display: "grid",
-                  placeItems: "center",
+                key="envelope"
+                initial={{ scale: 0.88, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ type: "spring", duration: 0.5, bounce: 0.25 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpened(true);
                 }}
-                title={opened ? "" : "Açmak için tıkla"}
+                title="Açmak için tıkla"
+                style={{ position: "relative", width: 440, height: 300, cursor: "pointer" }}
               >
-                {/* HEART SEAL */}
-                {!opened && (
+                <div style={{ position: "absolute", inset: 0, filter: "drop-shadow(0 20px 55px rgba(0,0,0,.38))" }}>
+                  {/* gövde */}
                   <div
                     style={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: "999px",
-                      background:
-                        "radial-gradient(circle at 30% 30%, #ff8da1, #ff2d55)",
-                      boxShadow:
-                        "0 4px 10px rgba(255,45,85,.35), inset 0 2px 6px rgba(255,255,255,.6)",
+                      position: "absolute",
+                      inset: "48px 0 0 0",
+                      background: "linear-gradient(180deg,#fff,#f4f6fa 50%,#e9edf5 100%)",
+                      border: "1px solid #e0e6ef",
+                      borderRadius: 14,
+                    }}
+                  />
+                  {/* alt üçgen */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      height: 200,
+                      clipPath: "polygon(0% 0%, 50% 100%, 100% 0%)",
+                      background: "linear-gradient(180deg,#fff,#f2f4f8 70%,#e9edf5 100%)",
+                      borderBottomLeftRadius: 14,
+                      borderBottomRightRadius: 14,
+                      borderLeft: "1px solid #e0e6ef",
+                      borderRight: "1px solid #e0e6ef",
+                      borderBottom: "1px solid #d7deea",
+                    }}
+                  />
+                  {/* üst kapak + kalp */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      height: 190,
+                      clipPath: "polygon(0% 100%, 50% 0%, 100% 100%)",
+                      background: "linear-gradient(180deg,#ffffff,#f3f5f9 70%,#e9edf5 100%)",
+                      borderTopLeftRadius: 14,
+                      borderTopRightRadius: 14,
+                      border: "1px solid #e0e6ef",
                       display: "grid",
                       placeItems: "center",
-                      border: "1px solid rgba(0,0,0,.06)",
                     }}
                   >
-                    <span style={{ fontSize: 22, lineHeight: 1 }}>❤️</span>
+                    <motion.div
+                      initial={{ scale: 1 }}
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 1.2 }}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 999,
+                        background: "radial-gradient(circle at 30% 30%,#ff8da1,#ff2d55)",
+                        boxShadow: "0 6px 14px rgba(255,45,85,.35), inset 0 2px 6px rgba(255,255,255,.6)",
+                        display: "grid",
+                        placeItems: "center",
+                        border: "1px solid rgba(0,0,0,.06)",
+                      }}
+                    >
+                      <span style={{ fontSize: 24, lineHeight: 1 }}>❤️</span>
+                    </motion.div>
                   </div>
-                )}
+                </div>
               </motion.div>
-            </div>
+            )}
+          </AnimatePresence>
 
-            {/* LETTER (paper) — slides up after flap opens */}
-            <motion.div
-              initial={false}
-              animate={{
-                y: opened ? -80 : 80,
-                opacity: opened ? 1 : 0,
-              }}
-              transition={{ duration: 0.45, delay: opened ? 0.05 : 0 }}
-              style={{
-                position: "absolute",
-                left: 18,
-                right: 18,
-                top: 70,
-                height: opened ? paperHeight : 0, // ⬅️ dynamic height
-                pointerEvents: opened ? "auto" : "none",
-                overflow: "hidden",
-              }}
-            >
-              <div
+          {/* KAĞIT — tam ortalı A4 benzeri */}
+          <AnimatePresence>
+            {opened && (
+              <motion.div
+                key="paper"
+                initial={{ scale: 0.96, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ type: "spring", duration: 0.55, bounce: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
                 style={{
-                  maxWidth: 780,
-                  height: "100%",
-                  overflowY: "auto", // ⬅️ long letter scrolls
-                  margin: "0 auto",
-                  background:
-                    "linear-gradient(0deg, rgba(255,255,255,0.98), rgba(248,250,253,0.98))",
-                  border: "1px solid #e5e9f2",
-                  borderRadius: 10,
-                  boxShadow:
-                    "0 10px 30px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.6)",
-                  color: "#1c2330",
-                  lineHeight: 1.9,
-                  fontSize: 20,
-                  padding: "30px 26px",
-                  fontFamily: "'Dancing Script', cursive",
-                  scrollBehavior: "smooth",
+                  width: paperW,
+                  height: paperH,
+                  background: "linear-gradient(0deg,rgba(255,255,255,.98),rgba(248,250,253,.98))",
+                  border: "1px solid #dfe6f1",
+                  borderRadius: 14,
+                  boxShadow: "0 42px 120px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.7)",
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
+                {/* Sticky başlık */}
                 <div
                   style={{
-                    textAlign: "center",
-                    marginBottom: 10,
-                    fontWeight: 700,
-                    fontSize: 24,
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    padding: "16px 20px",
+                    background: "linear-gradient(180deg,#ffffff,#f7f9fc)",
+                    borderBottom: "1px solid rgba(0,0,0,.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
                   }}
                 >
-                  ✉️ Mektup
+                  <span style={{ opacity: 0.85 }}>✉️</span>
+                  <strong style={{ fontSize: 20, opacity: 0.92 }}>Mektup</strong>
+                  <div style={{ marginLeft: "auto" }}>
+                    <button
+                      onClick={handleClose}
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: 10,
+                        border: "1px solid #cfd6e3",
+                        background: "#0f172a",
+                        color: "#fff",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Kapat (Esc)
+                    </button>
+                  </div>
                 </div>
 
-                <div style={{ fontSize: 20, textAlign: "left" }}>{children}</div>
-
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <button
-                    onClick={resetAndClose}
-                    style={{
-                      marginTop: 16,
-                      padding: "10px 16px",
-                      borderRadius: 10,
-                      border: "1px solid #d0d6e3",
-                      background: "#0f172a",
-                      color: "#fff",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    Kapat
-                  </button>
+                {/* İçerik */}
+                <div
+                  style={{
+                    flex: 1,
+                    overflowY: "auto", // mouse scroll için
+                    padding: "26px 30px 34px",
+                    fontFamily: "'Dancing Script', cursive",
+                    fontSize: 22,
+                    lineHeight: 2.0,
+                    color: "#131a29",
+                    scrollBehavior: "smooth",
+                  }}
+                >
+                  {children}
                 </div>
-              </div>
-            </motion.div>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>

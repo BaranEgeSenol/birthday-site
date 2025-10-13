@@ -115,6 +115,7 @@ export default function App() {
                 Dilerim bu yıl senin için yepyeni güzelliklerle dolu olur.
             </p>
 
+
             <p style={{ textAlign: "right", marginTop: 30 }}>
                 — Baran Ege Şenol 💌
             </p>
