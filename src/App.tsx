@@ -84,6 +84,7 @@ export default function App() {
         <p>
           Bugün senin günün. Hayatıma kattığın tüm mutluluklar için teşekkür ederim.
           Birlikte geçirdiğimiz her an benim için çok değerli. İyi ki varsın, iyi ki doğdun!
+          
         </p>
         <p>
           Nice sağlıklı, mutlu ve sürprizlerle dolu senelere... <br /> — Baran Ege Şenol

@@ -151,63 +151,64 @@ export default function LetterModal({ open, onClose, children }: Props) {
 
             {/* LETTER (paper) — slides up after flap opens */}
             <motion.div
-              initial={false}
-              animate={{
-                y: opened ? -80 : 80, // yukarı çıkar
+            initial={false}
+            animate={{
+                y: opened ? -80 : 80,
                 opacity: opened ? 1 : 0,
-              }}
-              transition={{ duration: 0.45, delay: opened ? 0.05 : 0 }}
-              style={{
+            }}
+            transition={{ duration: 0.45, delay: opened ? 0.05 : 0 }}
+            style={{
                 position: "absolute",
                 left: 18,
                 right: 18,
                 top: 70,
                 height: 0,
                 pointerEvents: opened ? "auto" : "none",
-              }}
+            }}
             >
-              <div
+            <div
                 style={{
-                  maxWidth: 740,
-                  width: "calc(100% - 0px)",
-                  margin: "0 auto",
-                  background:
+                maxWidth: 740,
+                width: "calc(100% - 0px)",
+                margin: "0 auto",
+                background:
                     "linear-gradient(0deg, rgba(255,255,255,0.98), rgba(248,250,253,0.98))",
-                  border: "1px solid #e5e9f2",
-                  borderRadius: 10,
-                  boxShadow:
+                border: "1px solid #e5e9f2",
+                borderRadius: 10,
+                boxShadow:
                     "0 10px 30px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.6)",
-                  color: "#1c2330",
-                  lineHeight: 1.7,
-                  fontSize: 16,
-                  padding: "20px 18px",
+                color: "#1c2330",
+                lineHeight: 1.8,
+                fontSize: 20,
+                padding: "26px 22px",
+                fontFamily: "'Dancing Script', cursive", // ✨ eklendi
                 }}
-              >
-                <div
-                  style={{ textAlign: "center", marginBottom: 8, fontWeight: 700 }}
-                >
-                  ✉️ Mektup
+            >
+                <div style={{ textAlign: "center", marginBottom: 8, fontWeight: 700 }}>
+                ✉️ Mektup
                 </div>
-                <div style={{ fontSize: 16 }}>{children}</div>
+                <div style={{ fontSize: 20 }}>{children}</div>
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <button
+                <button
                     onClick={resetAndClose}
                     style={{
-                      marginTop: 14,
-                      padding: "10px 14px",
-                      borderRadius: 10,
-                      border: "1px solid #d0d6e3",
-                      background: "#0f172a",
-                      color: "#fff",
-                      fontWeight: 600,
-                      cursor: "pointer",
+                    marginTop: 14,
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    border: "1px solid #d0d6e3",
+                    background: "#0f172a",
+                    color: "#fff",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    fontFamily: "inherit", // buton fontu sade kalsın
                     }}
-                  >
+                >
                     Kapat
-                  </button>
+                </button>
                 </div>
-              </div>
+            </div>
             </motion.div>
+
           </motion.div>
         </motion.div>
       )}
