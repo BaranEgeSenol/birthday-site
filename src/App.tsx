@@ -148,8 +148,8 @@ export default function App() {
           {" "}
           Cümleme öncelikle içten bir <strong>teşekkür</strong> ederek başlamak
           istiyorum. Hayatımda ilk defa domainli bir site yaptım ve bu anı daha
-          özel kılmak istedim. Çünkü sen bana tam 00.00’da doğum günümü kutlayan
-          ilk kişiydin… Hayatımda bugüne kadar kimse bana bu kadar içten bir
+          özel kılmak istedim. Çünkü sen bana tam 00.00’da doğum günümü kutlayacak 
+          kadar beni mutlu ettin. Hayatımda bugüne kadar kimse bana bu kadar içten bir
           şekilde doğum günü kutlamamıştı. Bu yüzden, senin bana verdiğin
           değerin karşılığını en az senin kadar özel bir şey yaparak vermek
           istedim.{" "}
