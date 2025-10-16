@@ -11,5 +11,5 @@ export const photos = [
   { src: "/photos/09.JPG", caption: "10 Üzerinden 20 30 u falan var " },
   { src: "/photos/10.JPG", caption: "Uyuyan Güzel" },
   { src: "/photos/11.JPG", caption: "Dünyanın En Harika Diyetisyeni!" },
-  { src: "/photos/12.jpg", caption: "Lansmana Tek düzgün giyinen Bitirim ikili!" }
+  { src: "/photos/12.jpg", caption: "Lansmanda Tek düzgün giyinen Bitirim ikili!" }
 ];
