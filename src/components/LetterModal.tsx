@@ -1,23 +1,40 @@
-// Built by Baran Ege Şenol — Envelope → centered A4-like letter (polished) + confetti + body scroll lock + mouse scroll support
+// Built by Baran Ege Şenol — Envelope → centered A4-like letter + confetti + body scroll lock
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
-type Props = { open: boolean; onClose: () => void; children: React.ReactNode };
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  onEnvelopeOpen?: () => void; // ✨ yeni
+  forceLetter?: boolean;       // ✨ yeni
+};
 
-export default function LetterModal({ open, onClose, children }: Props) {
-  const [opened, setOpened] = useState(false);
+export default function LetterModal({
+  open,
+  onClose,
+  children,
+  onEnvelopeOpen,
+  forceLetter = false,
+}: Props) {
+  const [opened, setOpened] = useState<boolean>(forceLetter);
   const [paperW, setPaperW] = useState(900);
-  const [paperH, setPaperH] = useState(1273); // A4 ≈ 1:1.414
+  const [paperH, setPaperH] = useState(1273);
+
+  // forceLetter değişirse eşitle
+  useEffect(() => {
+    setOpened(forceLetter);
+  }, [forceLetter]);
 
   // Viewport’a göre A4 benzeri boyut hesapla
   useEffect(() => {
     const calc = () => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const w = Math.min(Math.max(420, Math.floor(vw * 0.95)), 1000); // 95vw, max 1000px
+      const w = Math.min(Math.max(420, Math.floor(vw * 0.95)), 1000);
       const a4h = Math.floor(w * 1.414);
-      const h = Math.min(Math.floor(vh * 0.92), a4h); // 92vh tavan
+      const h = Math.min(Math.floor(vh * 0.92), a4h);
       setPaperW(w);
       setPaperH(h);
     };
@@ -26,7 +43,7 @@ export default function LetterModal({ open, onClose, children }: Props) {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // Modal açıkken sayfa arkasını kilitle + ESC ile kapat
+  // Modal açıkken body scroll kilidi + ESC
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -40,11 +57,11 @@ export default function LetterModal({ open, onClose, children }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Zarf açılınca konfeti
+  // Mektup açıldığında konfeti
   useEffect(() => {
     if (!opened) return;
     const burst = (opts = {}) =>
-      confetti({ particleCount: 160, spread: 70, origin: { y: 0.6 }, ticks: 180, ...(opts as any) });
+      confetti({ particleCount: 160, spread: 70, origin: { y: 0.6 }, ticks: 180, ...opts });
     burst();
     setTimeout(() => burst({ angle: 60, spread: 55, origin: { x: 0 } }), 120);
     setTimeout(() => burst({ angle: 120, spread: 55, origin: { x: 1 } }), 200);
@@ -53,6 +70,15 @@ export default function LetterModal({ open, onClose, children }: Props) {
   const handleClose = () => {
     setOpened(false);
     onClose();
+  };
+
+  const handleEnvelopeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onEnvelopeOpen) {
+      onEnvelopeOpen(); // dışarıya bırak
+    } else {
+      setOpened(true);  // eski davranış
+    }
   };
 
   return (
@@ -76,19 +102,16 @@ export default function LetterModal({ open, onClose, children }: Props) {
             padding: 16,
           }}
         >
-          {/* ZARF — sadece açılana kadar */}
+          {/* Zarf sahnesi — forceLetter=false ve opened=false iken */}
           <AnimatePresence>
-            {!opened && (
+            {!opened && !forceLetter && (
               <motion.div
                 key="envelope"
-                initial={{ scale: 0.88, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.88, opacity: 0, y: 8 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ type: "spring", duration: 0.5, bounce: 0.25 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpened(true);
-                }}
+                onClick={handleEnvelopeClick}
                 title="Açmak için tıkla"
                 style={{ position: "relative", width: 440, height: 300, cursor: "pointer" }}
               >
@@ -137,10 +160,7 @@ export default function LetterModal({ open, onClose, children }: Props) {
                       placeItems: "center",
                     }}
                   >
-                    <motion.div
-                      initial={{ scale: 1 }}
-                      animate={{ scale: [1, 1.08, 1] }}
-                      transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 1.2 }}
+                    <div
                       style={{
                         width: 50,
                         height: 50,
@@ -153,20 +173,20 @@ export default function LetterModal({ open, onClose, children }: Props) {
                       }}
                     >
                       <span style={{ fontSize: 24, lineHeight: 1 }}>❤️</span>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* KAĞIT — tam ortalı A4 benzeri */}
+          {/* A4 mektup */}
           <AnimatePresence>
-            {opened && (
+            {(opened || forceLetter) && (
               <motion.div
                 key="paper"
-                initial={{ scale: 0.96, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.96, opacity: 0, y: 6 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ type: "spring", duration: 0.55, bounce: 0.25 }}
                 onClick={(e) => e.stopPropagation()}
@@ -182,7 +202,6 @@ export default function LetterModal({ open, onClose, children }: Props) {
                   flexDirection: "column",
                 }}
               >
-                {/* Sticky başlık */}
                 <div
                   style={{
                     position: "sticky",
@@ -216,11 +235,10 @@ export default function LetterModal({ open, onClose, children }: Props) {
                   </div>
                 </div>
 
-                {/* İçerik */}
                 <div
                   style={{
                     flex: 1,
-                    overflowY: "auto", // mouse scroll için
+                    overflowY: "auto",
                     padding: "26px 30px 34px",
                     fontFamily: "'Dancing Script', cursive",
                     fontSize: 22,
