@@ -7,8 +7,8 @@ type Props = {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  onEnvelopeOpen?: () => void; // ✨ yeni
-  forceLetter?: boolean;       // ✨ yeni
+  onEnvelopeOpen?: () => void; // kalbe tıklanınca (ses vb.)
+  forceLetter?: boolean;       // true ise direkt mektup görünür
 };
 
 export default function LetterModal({
@@ -27,7 +27,7 @@ export default function LetterModal({
     setOpened(forceLetter);
   }, [forceLetter]);
 
-  // Viewport’a göre A4 benzeri boyut hesapla
+  // Viewport’a göre A4 benzeri boyut
   useEffect(() => {
     const calc = () => {
       const vw = window.innerWidth;
@@ -57,7 +57,7 @@ export default function LetterModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Mektup açıldığında konfeti
+  // Mektup açılınca konfeti
   useEffect(() => {
     if (!opened) return;
     const burst = (opts = {}) =>
@@ -72,13 +72,11 @@ export default function LetterModal({
     onClose();
   };
 
+  // 🔧 FIX: Kalbe tıklayınca hem callback (ses) çağrılsın hem mektup AÇILSIN
   const handleEnvelopeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onEnvelopeOpen) {
-      onEnvelopeOpen(); // dışarıya bırak
-    } else {
-      setOpened(true);  // eski davranış
-    }
+    onEnvelopeOpen?.();
+    setOpened(true);
   };
 
   return (
@@ -202,7 +200,9 @@ export default function LetterModal({
                   flexDirection: "column",
                 }}
               >
+                {/* Sticky başlık */}
                 <div
+                  className="letter-header"
                   style={{
                     position: "sticky",
                     top: 0,
@@ -235,7 +235,9 @@ export default function LetterModal({
                   </div>
                 </div>
 
+                {/* İçerik */}
                 <div
+                  className="letter-content"
                   style={{
                     flex: 1,
                     overflowY: "auto",

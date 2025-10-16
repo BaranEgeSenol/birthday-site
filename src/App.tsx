@@ -1,15 +1,16 @@
-// Built by Baran Ege Şenol — Always-open letter + audio fade-out + confetti + gallery
+// Built by Baran Ege Şenol — Envelope→Letter + audio fade-out + confetti + gallery (responsive-ready)
 import React, { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import LetterModal from "./components/LetterModal";
 import Gallery from "./components/Gallery";
+import "./styles/responsive.css";
 
 export default function App() {
   const [open, setOpen] = useState(false);
-  const forceLetter = false; // ✅ ZARF geri: önce zarf görünür, tıklayınca mektup açılır
+  const forceLetter = false; // önce zarf, kalbe tıklayınca mektup
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // --- Kısayol: C → konfeti ---
+  // C → konfeti
   useEffect(() => {
     const fireKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === "c") fire();
@@ -35,7 +36,7 @@ export default function App() {
       if (a.volume - step <= 0) {
         a.pause();
         a.currentTime = 0;
-        a.volume = 0.85; // varsayılan
+        a.volume = 0.85;
         clearInterval(fade);
       } else {
         a.volume = +(a.volume - step).toFixed(3);
@@ -66,13 +67,16 @@ export default function App() {
     >
       <main style={{ flex: 1, display: "grid", placeItems: "center", textAlign: "center" }}>
         <div>
-          <h1 style={{ fontSize: 48, margin: 0 }}>🎂 Happy Birthday! 🎉</h1>
-          <p style={{ opacity: 0.8, marginTop: 8 }}>
+          <h1 className="hero-title" style={{ fontSize: 48, margin: 0 }}>
+            🎂 Happy Birthday! 🎉
+          </h1>
+          <p className="hero-sub" style={{ opacity: 0.8, marginTop: 8 }}>
             Made with ❤️ by <b>Baran Ege Şenol</b>
           </p>
 
           <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "center" }}>
             <button
+              className="btn"
               onClick={fire}
               style={{
                 padding: "12px 20px",
@@ -83,11 +87,13 @@ export default function App() {
                 cursor: "pointer",
                 fontWeight: 600,
               }}
+              aria-label="Celebrate"
             >
               Celebrate 🎊
             </button>
 
             <button
+              className="btn"
               onClick={onOpenLetter}
               style={{
                 padding: "12px 20px",
@@ -98,6 +104,7 @@ export default function App() {
                 cursor: "pointer",
                 fontWeight: 600,
               }}
+              aria-label="Mektubu Aç"
             >
               ✉️ Mektubu Aç
             </button>
@@ -108,10 +115,10 @@ export default function App() {
       {/* Foto galeri */}
       <Gallery />
 
-      {/* Opsiyonel: selamlama sesi (public/audio/greeting.mp3 varsa çalar) */}
+      {/* Ses (varsa /audio/greeting.mp3) */}
       <audio ref={audioRef} src="/audio/greeting.mp3" preload="auto" />
 
-      {/* Mektup Modal — A4 görünüm */}
+      {/* Mektup Modal — A4 */}
       <LetterModal
         open={open}
         onClose={() => {
@@ -119,8 +126,9 @@ export default function App() {
           stopAudioSoft();
         }}
         forceLetter={forceLetter}
+        // onEnvelopeOpen={() => audioRef.current?.play().catch(() => {})} // istersen kalpte başlat
       >
-        {/* ———— MEKTUP İÇERİĞİN (AYNEN KORUNDU) ———— */}
+        {/* ———— MEKTUP ———— */}
         <p>Merhaba Ahsencim,</p>
 
         <p>

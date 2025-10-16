@@ -1,0 +1,27 @@
+/* iPhone 14 Pro Max ve benzeri küçük ekranlar için cilalar */
+@media (max-width: 480px) {
+  .hero-title { font-size: 32px; line-height: 1.15; }
+  .hero-sub   { font-size: 14px; }
+
+  .btn { padding: 14px 18px; font-size: 16px; border-radius: 12px; }
+
+  /* Galeri grid ve kartlar */
+  .gallery-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .gallery-card img { height: 180px !important; }
+
+  /* Lightbox */
+  .lightbox-img { max-width: 94vw !important; max-height: 74vh !important; }
+  .lightbox-caption { font-size: 18px !important; padding: 8px 10px !important; }
+
+  /* Mektup (A4 içerik) */
+  .letter-header { padding: 12px 14px !important; }
+  .letter-content { font-size: 19px !important; line-height: 1.9 !important; padding: 18px 16px 22px !important; }
+}
+
+/* iOS çentik güvenli alanı */
+@supports (padding: max(0px)) {
+  :root {
+    --safe-top: max(env(safe-area-inset-top), 0px);
+    --safe-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+}

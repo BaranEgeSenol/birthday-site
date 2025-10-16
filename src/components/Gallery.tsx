@@ -1,10 +1,11 @@
 // Built by Baran Ege Şenol — Responsive photo gallery + lightbox with captions & keyboard nav
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { photos } from "../lib/photos";
 
 export default function Gallery() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const startX = useRef<number | null>(null);
 
   const openAt = (i: number) => setSelectedIndex(i);
   const close = () => setSelectedIndex(null);
@@ -29,12 +30,25 @@ export default function Gallery() {
     return () => window.removeEventListener("keydown", onKey);
   }, [selectedIndex]);
 
+  // Basit mobil swipe (lightbox açıkken)
+  const onTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (startX.current === null) return;
+    const dx = e.changedTouches[0].clientX - startX.current;
+    if (dx > 40) prev();      // sağa kaydır → önceki
+    if (dx < -40) next();     // sola kaydır → sonraki
+    startX.current = null;
+  };
+
   return (
     <section style={{ padding: "40px 20px 80px", textAlign: "center" }}>
       <h2 style={{ fontSize: 28, marginBottom: 24 }}>📸 Anılar</h2>
 
       {/* Grid */}
       <div
+        className="gallery-grid"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -45,6 +59,7 @@ export default function Gallery() {
       >
         {photos.map((p, i) => (
           <motion.div
+            className="gallery-card"
             key={i}
             style={{
               position: "relative",
@@ -101,6 +116,8 @@ export default function Gallery() {
               padding: 16,
             }}
             onClick={close}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
           >
             <div
               style={{
@@ -113,6 +130,7 @@ export default function Gallery() {
               onClick={(e) => e.stopPropagation()}
             >
               <motion.img
+                className="lightbox-img"
                 key={photos[selectedIndex].src}
                 src={photos[selectedIndex].src}
                 alt={photos[selectedIndex].caption}
@@ -132,6 +150,7 @@ export default function Gallery() {
               {/* Caption bar */}
               {photos[selectedIndex].caption && (
                 <div
+                  className="lightbox-caption"
                   style={{
                     alignSelf: "center",
                     maxWidth: "92vw",
