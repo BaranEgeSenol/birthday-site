@@ -65,7 +65,14 @@ export default function App() {
         flexDirection: "column",
       }}
     >
-      <main style={{ flex: 1, display: "grid", placeItems: "center", textAlign: "center" }}>
+      <main
+        style={{
+          flex: 1,
+          display: "grid",
+          placeItems: "center",
+          textAlign: "center",
+        }}
+      >
         <div>
           <h1 className="hero-title" style={{ fontSize: 48, margin: 0 }}>
             🎂 Happy Birthday! 🎉
@@ -74,7 +81,14 @@ export default function App() {
             Made with ❤️ by <b>Baran Ege Şenol</b>
           </p>
 
-          <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "center" }}>
+          <div
+            style={{
+              marginTop: 18,
+              display: "flex",
+              gap: 10,
+              justifyContent: "center",
+            }}
+          >
             <button
               className="btn"
               onClick={fire}
@@ -129,42 +143,59 @@ export default function App() {
         // onEnvelopeOpen={() => audioRef.current?.play().catch(() => {})} // istersen kalpte başlat
       >
         {/* ———— MEKTUP ———— */}
-        <p>Merhaba Ahsencim,</p>
-
+        <p>Merhaba Ahsencim,</p>{" "}
         <p>
-          Bugün senin günün… Ama sadece bir doğum günü değil bu.{" "}
-          Bence senin varlığının dünyaya kattığı en güzel anlardan biri.{" "}
-          Seni tanıdığım günden beri, enerjinle, gülüşünle, düşüncelerinle hep
-          farklı bir iz bıraktın bende. Ne zaman moralim bozulsa aklıma gelen
-          o küçük anlar bile yüzüme kocaman bir gülümseme konduruyor.
-        </p>
-
+          {" "}
+          Cümleme öncelikle içten bir <strong>teşekkür</strong> ederek başlamak
+          istiyorum. Hayatımda ilk defa domainli bir site yaptım ve bu anı daha
+          özel kılmak istedim. Çünkü sen bana tam 00.00’da doğum günümü kutlayan
+          ilk kişiydin… Hayatımda bugüne kadar kimse bana bu kadar içten bir
+          şekilde doğum günü kutlamamıştı. Bu yüzden, senin bana verdiğin
+          değerin karşılığını en az senin kadar özel bir şey yaparak vermek
+          istedim.{" "}
+        </p>{" "}
         <p>
-          Bazen bir mesajınla, bazen sadece bir bakışınla, anlatamadığın
-          binlerce şeyi anlatabiliyorsun.{" "}
-          Bu kadar doğal, bu kadar içten bir insan tanımak benim için
-          gerçekten büyük bir şans.
-        </p>
-
+          {" "}
+          İnan o kadar mutluyum ki bunu yaptığım için… Çünkü sana değer
+          verdiğimi anlatmanın en güzel yollarından biri buydu. Sitede tam
+          senlik bir dil kullanmaya çalıştım. TypeScript ağırlıklı yaptım ama
+          sırf sen PHP seviyorsun diye tek bir tane bile kodunu eklemedim
+          ahahahah — tam senlik oldu bence!{" "}
+        </p>{" "}
         <p>
-          Bu siteyi yaparken düşündüğüm tek şey, senin o anda
-          gülümsemeni görmekti.{" "}
-          Çünkü her şeyin ötesinde — bu satırların da, bu kodların da ötesinde —
-          ben senin yüzünde bir tebessüm görmek istedim sadece.
-        </p>
-
+          {" "}
+          Bugün senin günün… İyi ki hayatıma girdin ve bu kadar özel anılar
+          biriktirdik. Zaman nasıl geçti anlamadan, birlikte geçirdiğimiz her an
+          hafızamda çok kıymetli bir yer edindi. Kahkahalarımız, paylaştığımız o
+          küçük ama anlamlı anlar ve birbirimizi gerçekten anladığımız zamanlar
+          benim için unutulmaz.{" "}
+        </p>{" "}
         <p>
-          Belki bu sayfa kapanacak, belki zamanı geçecek ama
-          burada yazan duygular hep aynı kalacak:{" "}
-          “İyi ki doğdun, iyi ki varsın, iyi ki hayatımdasın.”
-        </p>
-
+          {" "}
+          Birlikte Kajun yapmayı, kahve kaçamaklarımızı ve o Cool Lime
+          jestlerini hatırladıkça yüzümde istemsiz bir tebessüm beliriyor. Çünkü
+          bu anlar, seninle kurduğumuz dostluğun ne kadar içten ve gerçek
+          olduğunun birer kanıtı gibi.{" "}
+        </p>{" "}
         <p>
-          Nice sağlıklı, mutlu, kahkahalarla dolu yılların olsun.
-          Dilerim bu yıl senin için yepyeni güzelliklerle dolu olur.
+          {" "}
+          Her buluştuğumuzda zamanın nasıl geçtiğini anlamadan dakikaları
+          saatlere çevirdiğimiz o uzun, derin sohbetleri çok seviyorum. Yeri
+          geliyor moralimiz bozuluyor ama bir şekilde birbirimize iyi gelmeyi
+          başarıyoruz. Bu da bizim dostluğumuzun ne kadar güçlü ve özel
+          olduğunun göstergesi.{" "}
+        </p>{" "}
+        <p>
+          {" "}
+          Yeni yaşın sana sağlık, huzur, bol kahkaha ve içten gülümsemeler
+          getirsin. Dilerim bu yıl, hayat sana daima senin başkalarına verdiğin
+          kadar güzellik sunsun. Çünkü sen gerçekten çok değerli, içten ve özel
+          bir insansın. İyi ki varsın, iyi ki doğdun… Ve iyi ki yollarımız
+          kesişmiş. Seni Seviyorum ☘️{" "}
         </p>
-
-        <p style={{ textAlign: "right", marginTop: 30 }}>— Baran Ege Şenol 💌</p>
+        <p style={{ textAlign: "right", marginTop: 30 }}>
+          Site Admini ve Kurucusu — Baran Ege Şenol 💌
+        </p>
       </LetterModal>
     </div>
   );

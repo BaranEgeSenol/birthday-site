@@ -216,7 +216,7 @@ export default function LetterModal({
                   }}
                 >
                   <span style={{ opacity: 0.85 }}>✉️</span>
-                  <strong style={{ fontSize: 20, opacity: 0.92 }}>Mektup</strong>
+                  <strong style={{ fontSize: 20, opacity: 0.92 }}>Dünyanın En Harika Diyetisyenine</strong>
                   <div style={{ marginLeft: "auto" }}>
                     <button
                       onClick={handleClose}
